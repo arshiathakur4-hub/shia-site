@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shia and Her Privileges</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Figtree:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1F0C05;
+  --cherry: #530309;
+  --cocoa: #5D3B2D;
+  --champagne: #C6AE93;
+  --pearl: #E8E2DA;
+  --paper: #F6F2EC;
+  --white: #FDFBF7;
+  --tomato: var(--cherry);
+  --butter: var(--champagne);
+  --lilac: var(--pearl);
+  --blush: #E8D9C5;
+  --mint: #EFE8DE;
+  --sky: #DCD0BF;
+  --display: "Instrument Serif", "Times New Roman", serif;
+  --mono: "DM Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--body); font-size: 17px; line-height: 1.55;
+}
+body.locked { overflow: hidden; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+p { margin: 0; }
+a { color: inherit; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--champagne); outline-offset: 3px; }
+
+/* dark block: black cherry with a hand-coded lattice */
+#splash, .band {
+  color: var(--paper);
+  background:
+    radial-gradient(ellipse 70% 90% at 15% 0%, #7c0f1a 0%, rgba(124,15,26,0) 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23C6AE93' stroke-opacity='.2'%3E%3Cpath d='M36 3 C46 18 54 26 69 36 C54 46 46 54 36 69 C26 54 18 46 3 36 C18 26 26 18 36 3Z'/%3E%3Ccircle cx='36' cy='36' r='5'/%3E%3C/g%3E%3C/svg%3E"),
+    var(--cherry);
+}
+
+/* ---------- splash ---------- */
+#splash {
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+  gap: 32px; padding: 24px clamp(20px, 6vw, 80px);
+  transition: transform .8s cubic-bezier(.77,0,.18,1);
+}
+#splash.gone { transform: translateY(-101%); }
+#splash h1 { font-size: clamp(54px, 12vw, 170px); line-height: .92; max-width: 13ch; }
+#splash h1 em { color: var(--champagne); }
+#splash p { max-width: 34ch; font-family: var(--mono); font-size: 14px; letter-spacing: .02em; opacity: .85; }
+
+.btn {
+  border: 0; cursor: pointer; border-radius: 4px; padding: 14px 22px;
+  font-family: var(--mono); font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+  background: var(--cherry); color: var(--paper); text-decoration: none; display: inline-block;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 rgba(83,3,9,.18); }
+.btn.alt { background: var(--paper); color: var(--cherry); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--cocoa); }
+.btn.ghost-l { background: transparent; color: var(--paper); border: 1.5px solid rgba(246,242,236,.55); }
+#splash .btn { background: var(--paper); color: var(--cherry); }
+
+/* ---------- header band (with your Diet Coke hand photo behind it) ---------- */
+.band { position: relative; isolation: isolate; border-bottom: 1px solid var(--champagne); box-shadow: 0 6px 0 -3px var(--paper), 0 7px 0 -3px var(--champagne); margin-bottom: 40px; }
+.band::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(83,3,9,.94) 0%, rgba(83,3,9,.62) 55%, rgba(31,12,5,.2) 100%),
+    url("diet-coke.jpg") center 38% / cover no-repeat;
+}
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 0; flex-wrap: wrap; }
+.logo { font-family: var(--display); font-size: 26px; text-decoration: none; font-style: italic; }
+.nav { display: flex; gap: 8px; flex-wrap: wrap; }
+.nav a, .nav button {
+  text-decoration: none; border: 1px solid rgba(246,242,236,.45); background: transparent; color: var(--paper); cursor: pointer;
+  padding: 8px 14px; border-radius: 4px; font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+}
+.nav .go { background: var(--paper); color: var(--cherry); border-color: var(--paper); }
+.hero { padding: 36px 0 72px; display: grid; gap: 18px; justify-items: start; }
+.hero .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--champagne); }
+.hero h1 { font-size: clamp(52px, 10vw, 132px); line-height: .92; max-width: 13ch; }
+.hero h1 em { color: var(--champagne); }
+.hero p { max-width: 46ch; font-size: 19px; opacity: .92; }
+.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+
+/* ---------- board ---------- */
+.board { columns: 4 250px; column-gap: 16px; padding-bottom: 80px; }
+.tile {
+  break-inside: avoid; margin: 0 0 16px; padding: 24px;
+  border-radius: 18px; display: grid; gap: 12px; align-content: start;
+  background: var(--white); border: 1px solid rgba(83,3,9,.12);
+  transition: transform .2s ease, box-shadow .2s ease;
+  animation: rise .6s ease both;
+}
+.tile:hover { transform: translateY(-4px); box-shadow: 0 14px 0 rgba(83,3,9,.08); }
+@keyframes rise { from { transform: translateY(18px); } }
+.tile h2 { font-size: 42px; }
+.tile h3 { font-size: 30px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .1em; opacity: .7; }
+.c-butter { background: var(--champagne); border-color: transparent; }
+.c-mint { background: var(--mint); } .c-sky { background: var(--sky); } .c-blush { background: var(--blush); }
+.c-lilac { background: var(--pearl); }
+.c-tomato { background: var(--cherry); color: var(--paper); border-color: transparent; }
+.c-ink { background: var(--ink); color: var(--paper); border-color: transparent; }
+.c-ink .btn.alt, .c-tomato .btn.alt { background: var(--paper); color: var(--cherry); }
+
+/* photo tiles in different shapes, with captions */
+.photo-tile { padding: 14px; gap: 10px; }
+.photo-tile .pic {
+  overflow: hidden;
+  background: repeating-linear-gradient(135deg, var(--champagne) 0 2px, var(--pearl) 2px 16px);
+}
+.photo-tile .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.shape-circle .pic { aspect-ratio: 1; border-radius: 50%; }
+.shape-arch .pic { aspect-ratio: 3 / 4; border-radius: 999px 999px 16px 16px; }
+.photo-tile figcaption { font-family: var(--display); font-style: italic; font-size: 26px; line-height: 1.05; text-align: center; padding: 2px 6px 6px; }
+
+/* portrait: your own art, with code-moved irises behind it */
+.portrait { position: relative; aspect-ratio: 3 / 4; border-radius: 18px; overflow: hidden; }
+.portrait svg { width: 100%; height: 100%; display: block; }
+.portrait .wait {
+  position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 16px;
+  background: repeating-linear-gradient(135deg, var(--champagne) 0 2px, var(--pearl) 2px 16px);
+  font-family: var(--mono); font-size: 12px; letter-spacing: .04em; text-transform: uppercase;
+}
+.strike { text-decoration: line-through; text-decoration-thickness: 2px; opacity: .7; }
+.book { display: grid; gap: 4px; border-left: 6px solid var(--cherry); padding-left: 14px; }
+.book strong { font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1; }
+.bar { height: 8px; border-radius: 99px; background: rgba(83,3,9,.15); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 40%; background: var(--cherry); border-radius: 99px; }
+.meme { font-family: var(--display); font-style: italic; font-size: 30px; line-height: 1.08; white-space: pre-line; }
+.meme small { display: block; font-family: var(--mono); font-style: normal; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; opacity: .65; margin-top: 12px; }
+.list { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.list li { display: grid; gap: 2px; padding-bottom: 12px; border-bottom: 1px solid rgba(83,3,9,.15); }
+.list li:last-child { border-bottom: 0; padding-bottom: 0; }
+.list b { font-family: var(--display); font-weight: 400; font-size: 22px; line-height: 1.1; }
+.field { display: grid; gap: 6px; }
+.field label { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+.input {
+  width: 100%; border: 1.5px solid var(--cocoa); background: var(--white); border-radius: 8px; padding: 10px 14px;
+}
+textarea.input { resize: vertical; min-height: 84px; }
+select.input { appearance: auto; }
+.status { font-size: 14px; font-weight: 500; min-height: 1.4em; }
+.fine { font-size: 14px; opacity: .8; }
+.stars { display: flex; gap: 2px; }
+.star { border: 0; background: none; cursor: pointer; font-size: 26px; line-height: 1; padding: 2px; color: rgba(83,3,9,.25); transition: transform .12s ease; }
+.star:hover { transform: scale(1.2); }
+.star.on { color: var(--cherry); }
+.c-ink .star { color: rgba(246,242,236,.35); }
+.c-ink .star.on { color: var(--champagne); }
+.btn[disabled] { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ---------- quiz ---------- */
+#quiz { position: fixed; inset: 0; z-index: 40; display: none; background: rgba(31,12,5,.7); overflow-y: auto; padding: 20px; }
+#quiz.open { display: block; }
+.qcard {
+  max-width: 600px; margin: 4vh auto; background: var(--paper); border-radius: 22px; padding: clamp(20px, 4vw, 36px);
+  display: grid; gap: 20px; position: relative;
+}
+.qtop { display: flex; align-items: center; gap: 14px; }
+.qprog { flex: 1; height: 8px; border-radius: 99px; background: rgba(83,3,9,.14); overflow: hidden; }
+.qprog i { display: block; height: 100%; background: var(--cherry); border-radius: 99px; transition: width .35s ease; }
+.qclose { border: 1px solid var(--cocoa); background: transparent; border-radius: 999px; width: 40px; height: 40px; cursor: pointer; font-size: 20px; line-height: 1; }
+.qcard h2 { font-size: clamp(34px, 6vw, 52px); }
+.opts { display: grid; gap: 10px; }
+.opt {
+  text-align: left; border: 1.5px solid var(--cocoa); background: var(--white); border-radius: 12px; padding: 14px 18px;
+  cursor: pointer; font-weight: 500; transition: transform .12s ease, background .12s ease;
+}
+.opt:hover { background: var(--champagne); transform: translateX(4px); }
+.rate-card { padding: 14px; border-radius: 16px; }
+.rate-img { width: 100%; display: block; border-radius: 10px; }
+.rate-row { display: flex; align-items: center; gap: 14px; }
+.rate-row input[type=range] { flex: 1; accent-color: var(--cherry); min-width: 0; }
+.rate-val { font-family: var(--display); font-size: 42px; min-width: 2.2ch; text-align: right; }
+.qnav { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.zone { position: relative; height: 150px; border-radius: 16px; background: var(--white); border: 1px solid rgba(83,3,9,.15); overflow: hidden; }
+.zone .btn { position: absolute; }
+#yesBtn { left: 16px; top: 50%; transform: translateY(-50%); background: var(--cherry); }
+#noBtn { left: calc(100% - 130px); top: calc(50% - 24px); background: var(--ink); transition: left .22s cubic-bezier(.3,1.6,.5,1), top .22s cubic-bezier(.3,1.6,.5,1); }
+.taunt { min-height: 1.5em; font-weight: 600; }
+.score { font-family: var(--display); font-size: clamp(100px, 26vw, 170px); line-height: .85; }
+.verdict { padding: 22px; border-radius: 16px; display: grid; gap: 8px; }
+.stamp { display: inline-block; justify-self: start; padding: 5px 12px; border-radius: 4px; background: var(--cherry); color: var(--paper); font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .tile, #splash, .btn, .opt, #noBtn, .qprog i, .star { transition: none; animation: none; }
+}
+</style>
+</head>
+<body class="locked">
+
+<!-- Screen one -->
+<section id="splash" aria-label="Welcome">
+  <h1>Be prepared for your <em>flabbers</em> to be&nbsp;gasted.</h1>
+  <p>A tiny website with strong opinions, a reading list and a compatibility test.</p>
+  <button class="btn" id="enterBtn" type="button">Gast me</button>
+</section>
+
+<!-- Screen two -->
+<div class="band" id="top">
+  <div class="wrap">
+    <header class="topbar">
+      <a class="logo" href="#top">Shia &amp; her privileges</a>
+      <nav class="nav" aria-label="Sections">
+        <a href="#board">The board</a>
+        <a href="https://substack.com/@itsprout" target="_blank" rel="noopener">Substack</a>
+        <button class="go" type="button" data-open-quiz>Are we compatible?</button>
+      </nav>
+    </header>
+    <section class="hero">
+      <span class="eyebrow">Welcome</span>
+      <h1>Welcome to <em>Shia</em> and her privileges.</h1>
+      <p>Look around, steal a book idea, and take the quiz if you are feeling brave. It ends with a verdict, and the verdict is final.</p>
+      <div class="hero-actions">
+        <button class="btn alt" type="button" data-open-quiz>Take the quiz</button>
+        <a class="btn ghost-l" href="https://substack.com/@itsprout" target="_blank" rel="noopener">Read my Substack</a>
+      </div>
+    </section>
+  </div>
+</div>
+<div class="wrap">
+  <main class="board" id="board">
+
+    <article class="tile c-lilac">
+      <div class="portrait" id="peekBox">
+        <svg id="peek" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration of Shia. Her eyes follow your cursor. Click her to change pose."></svg>
+        <div class="wait" id="peekWait">Upload hold-cup.png, sip.png, pour.png and chin.png next to index.html</div>
+      </div>
+      <pre id="peekLog" hidden style="font-size:12px;white-space:pre-wrap;margin:0"></pre>
+      <h2>About me</h2>
+      <p>Hi, I'm Shia. I'm 5'9". I'm getting used to wearing heels, because the long-term goal is to become a tree. I read, I write, I cook, and I vibe-code things like this at midnight.</p>
+    </article>
+
+    <article class="tile c-tomato">
+      <span class="eyebrow">Substack</span>
+      <h2>Read my Substack <span class="strike">because I'm depressed</span></h2>
+      <p>Because I'm conceited and think I'm better than everyone else.</p>
+      <a class="btn alt" style="justify-self:start;text-decoration:none" href="https://substack.com/@itsprout" target="_blank" rel="noopener">Go read it</a>
+    </article>
+
+    <article class="tile c-butter">
+      <span class="eyebrow">Currently reading</span>
+      <div class="book">
+        <strong>The Familiar</strong>
+        <span>by Leigh Bardugo</span>
+      </div>
+      <!-- change width:40% in the style above (.bar i) to show how far you are -->
+      <div class="bar" role="img" aria-label="40 percent read"><i></i></div>
+      <p>I read Six of Crows, and now I will read every book by her, because she is the one.</p>
+      <p class="fine">Opinions so far: I've always loved how she writes and how she talks. I'm personally an atheist, but more than believing in God, I've believed in the idea of things going wrong, because that's how the world is. There's always some kind of wrong pulling in. I have opinions on religion and on higher powers, and they might not be the conventional ones, but I like thinking they aren't all good. She gets me into that headspace.</p>
+    </article>
+
+    <figure class="tile photo-tile shape-circle c-mint">
+      <div class="pic"><img src="coffee.jpg" alt="Close-up of roasted coffee beans" onerror="this.style.display='none'"></div>
+      <figcaption>ate.</figcaption>
+    </figure>
+
+    <article class="tile">
+      <span class="eyebrow">Things I've been up to</span>
+      <ul class="list">
+        <li><b>Becoming who I was</b><span>I realised I was so much cooler at 23 than at 25, so I'm working my way back.</span></li>
+        <li><b>Buying plants</b><span>I want some. Soon.</span></li>
+      </ul>
+    </article>
+
+    <article class="tile c-blush">
+      <p class="meme nostars">Cashing in on Hinge by cracking jokes and not gatekeeping my face.
+It's always nice to be surprised.</p>
+    </article>
+
+    <figure class="tile photo-tile shape-arch c-sky">
+      <div class="pic"><img src="flowers.jpg" alt="Books and two carnations in a can by a sunny window" onerror="this.style.display='none'"></div>
+      <figcaption>Need more flowers by the window.</figcaption>
+    </figure>
+
+    <article class="tile c-sky">
+      <h3>Recommend me a book</h3>
+      <p class="fine">The good ones go straight onto my to-be-read list.</p>
+      <form id="bookForm" class="field" style="gap:12px" novalidate>
+        <div class="field">
+          <label for="bookTitle">Book and author</label>
+          <input class="input" id="bookTitle" type="text" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="bookWhy">Why this one?</label>
+          <textarea class="input" id="bookWhy"></textarea>
+        </div>
+        <button class="btn" type="submit">Add to my list</button>
+        <p class="status" id="bookStatus" role="status"></p>
+      </form>
+    </article>
+
+    <article class="tile c-ink">
+      <span class="eyebrow">Compatibility test</span>
+      <h2>Are we a match?</h2>
+      <p>About fifteen questions, plus follow-ups depending on what you answer. Some are multiple choice, some are written, one is rigged. You get a verdict at the end.</p>
+      <button class="btn alt" style="justify-self:start" type="button" data-open-quiz>Start the quiz</button>
+    </article>
+
+    <article class="tile c-butter">
+      <p class="meme nostars">My reading list, explained: I will always want to be the person who uses vocabulary the way other people use mannerisms to carry charm.
+Dostoevsky would be proud.</p>
+    </article>
+
+    <article class="tile c-blush">
+      <span class="eyebrow">The goal</span>
+      <h2>To be hot.</h2>
+      <p>Not money. Not people. Everything else follows. Also to be kind, which is a little sad to say out loud.</p>
+      <p class="fine">Yes, I cash in on my looks. The personality thrives anyway, and I'm very aware of the pretty privilege.</p>
+    </article>
+
+    <article class="tile c-mint">
+      <span class="eyebrow">Pinterest</span>
+      <h3>The board I fuck with so hard</h3>
+      <p class="fine">My vibe, in pictures.</p>
+      <a class="btn" style="justify-self:start;text-decoration:none" href="https://www.pinterest.com/YOURNAME/" target="_blank" rel="noopener">Open the board</a>
+    </article>
+
+    <article class="tile">
+      <span class="eyebrow">Simple things I love</span>
+      <ul class="list">
+        <li><b>Black coffee</b><span>Moved up from very sweet milky coffee, because I like neat things.</span></li>
+        <li><b>Good vanilla ice cream</b><span>The authentic kind.</span></li>
+        <li><b>Strawberries</b><span>Big fan.</span></li>
+        <li><b>Converse</b><span>The easiest shoe there is.</span></li>
+        <li><b>My Kindle</b></li>
+      </ul>
+    </article>
+
+    <article class="tile c-lilac">
+      <span class="eyebrow">Also things I've learned to do</span>
+      <ul class="list">
+        <li><b>Vibe-coding</b><span>Figuring out how to make things, and make my life easier.</span></li>
+        <li><b>Painting</b><span>Art is always better on walls and between pages.</span></li>
+        <li><b>Clay</b><span>Because it's fun.</span></li>
+        <li><b>Ukulele</b><span>Learning it, because everyone should have a piece of music in their personality.</span></li>
+      </ul>
+    </article>
+
+    <article class="tile c-butter">
+      <span class="eyebrow">Wish list</span>
+      <ul class="list">
+        <li><b>An aquarium date in Bangalore</b><span>Heard it's very cool.</span></li>
+        <li><b>A museum</b><span>There's one I really want to go to.</span></li>
+        <li><b>Sushi and cocktail workshops</b><span>I'll cook anything if there's a reason behind it.</span></li>
+        <li><b>Eating my way around Bangalore</b><span>Food first. Dates are optional.</span></li>
+        <li><b>Tattoos I want</b><span>Would love to know a good place.</span></li>
+        <li><b>A few more holes poked in my ears</b><span>Volunteers welcome.</span></li>
+      </ul>
+    </article>
+
+    <article class="tile c-sky">
+      <h3>Plan something with me</h3>
+      <p class="fine">Pick a thing and a date. I'll see it and decide whether to say yes.</p>
+      <form id="planForm" class="field" style="gap:12px" novalidate>
+        <div class="field">
+          <label for="planWhat">What</label>
+          <select class="input" id="planWhat">
+            <option>The Bangalore aquarium</option>
+            <option>A museum</option>
+            <option>A sushi-making workshop</option>
+            <option>A cocktail workshop</option>
+            <option>A food crawl</option>
+            <option>A black coffee, obviously</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="planDate">When</label>
+          <input class="input" id="planDate" type="date">
+        </div>
+        <div class="field">
+          <label for="planName">Your name</label>
+          <input class="input" id="planName" type="text" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="planContact">How can I reach you?</label>
+          <input class="input" id="planContact" type="text" autocomplete="off">
+        </div>
+        <button class="btn" type="submit">Send the plan</button>
+        <p class="status" id="planStatus" role="status"></p>
+      </form>
+    </article>
+
+    <article class="tile c-butter">
+      <span class="eyebrow">Ground rules</span>
+      <h3>No trauma bonding.</h3>
+      <p>I don't fuck with bonding over sad stories, and I won't build a connection on them.</p>
+    </article>
+
+    <article class="tile">
+      <span class="eyebrow">My Hinge take</span>
+      <p>I sometimes detest Hinge because it feels engineered, but I'm also shallow and I go for hot people.</p>
+    </article>
+
+    <article class="tile c-ink">
+      <p class="meme">Last time I downloaded Hinge, someone texted: "How's your cute life going?"
+I said: "Threat behavior."
+Deleted the app.<small>True story</small></p>
+    </article>
+
+  </main>
+</div>
+
+<!-- Quiz -->
+<div id="quiz" role="dialog" aria-modal="true" aria-label="Compatibility quiz">
+  <div class="qcard">
+    <div class="qtop">
+      <div class="qprog" aria-hidden="true"><i id="qbar" style="width:0%"></i></div>
+      <button class="qclose" id="qclose" type="button" aria-label="Close quiz">&times;</button>
+    </div>
+    <div id="qbody" style="display:grid;gap:20px"></div>
+  </div>
+</div>
+
+<script>
+/* ---- Settings you will edit ----
+   FORM_ENDPOINT: paste a Formspree (or similar) form URL so messages reach your inbox.
+   Left empty, nothing is sent anywhere. */
+const FORM_ENDPOINT = "";
+const MATCH_THRESHOLD = 60; // score out of 100 needed for "You should match"
+
+async function sendToShia(payload) {
+  if (!FORM_ENDPOINT) return { ok: false, preview: true };
+  try {
+    const r = await fetch(FORM_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    return { ok: r.ok };
+  } catch (e) { return { ok: false }; }
+}
+function say(el, r, okText) {
+  if (r.ok) el.textContent = okText;
+  else if (r.preview) el.textContent = "Preview mode: nothing was sent, because no form is connected yet.";
+  else el.textContent = "That didn't go through. Please try again in a moment.";
+}
+
+/* ---- splash ---- */
+const splash = document.getElementById("splash");
+document.getElementById("enterBtn").addEventListener("click", () => {
+  splash.classList.add("gone");
+  document.body.classList.remove("locked");
+  setTimeout(() => { splash.style.display = "none"; }, 900);
+});
+
+/* ---- book recommendation ---- */
+document.getElementById("bookForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const t = document.getElementById("bookTitle").value.trim();
+  const w = document.getElementById("bookWhy").value.trim();
+  const st = document.getElementById("bookStatus");
+  if (!t) { st.textContent = "Add a book title first."; return; }
+  st.textContent = "Sending...";
+  const r = await sendToShia({ type: "book recommendation", book: t, why: w });
+  say(st, r, "Added to the list. Thank you.");
+  if (r.ok) { e.target.reset(); }
+});
+
+/* ---- stars on memes (tiles marked "nostars" are skipped) ---- */
+document.querySelectorAll(".tile .meme:not(.nostars)").forEach(m => {
+  const row = document.createElement("div");
+  row.className = "stars"; row.setAttribute("role", "group"); row.setAttribute("aria-label", "Rate this meme");
+  for (let n = 1; n <= 5; n++) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "star"; b.textContent = "\u2605";
+    b.setAttribute("aria-label", n + (n > 1 ? " stars" : " star"));
+    b.addEventListener("click", () => row.querySelectorAll(".star").forEach((x, k) => x.classList.toggle("on", k < n)));
+    row.appendChild(b);
+  }
+  m.parentElement.appendChild(row);
+});
+
+/* ---- plan something ---- */
+const planDate = document.getElementById("planDate");
+planDate.min = new Date().toISOString().slice(0, 10);
+document.getElementById("planForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const st = document.getElementById("planStatus"), contact = document.getElementById("planContact").value.trim();
+  if (!planDate.value) { st.textContent = "Pick a date first."; return; }
+  if (!contact) { st.textContent = "Add a way for me to reach you."; return; }
+  st.textContent = "Sending...";
+  const r = await sendToShia({ type: "plan", what: document.getElementById("planWhat").value, date: planDate.value, name: document.getElementById("planName").value.trim(), contact });
+  say(st, r, "Sent. I'll let you know.");
+});
+
+/* =====================================================================
+   QUIZ
+   Choice options are written as [label, points, followUps].
+   followUps (optional) is a list of extra questions asked right after that answer.
+   Follow-up choices add bonus points; the final score is capped at 100.
+   Text questions get their "w" points only if the answer is 15+ characters.
+   ===================================================================== */
+const quiz = document.getElementById("quiz");
+const qbody = document.getElementById("qbody");
+const qbar = document.getElementById("qbar");
+
+const T = (id, q, sub, ph, w) => ({ id, type: "text", q, sub: sub || "", ph: ph || "", w: w || 0 });
+const FLAG = [["Green flag", 10], ["Red flag", 3], ["Depends, and I'll explain later", 7]];
+
+/* follow-up questions */
+const FK = { id: "fk", type: "choice", q: "What kind of fiction?", sub: "Closest match.", opts: [
+  ["Fantasy, the Lord of the Rings or Harry Potter kind", 8],
+  ["Dark academia and literary", 10],
+  ["Mystery and thrillers", 8],
+  ["Romance", 6],
+  ["Something else, let me tell you", 6, [T("fk_x", "Which kind?", "", "I read...")]]
+]};
+const NK = { id: "nk", type: "choice", q: "What kind of non-fiction?", sub: "Closest match.", opts: [
+  ["Big ideas, like Sapiens", 9],
+  ["Essays and memoir", 9],
+  ["Straight-talking, like The Subtle Art of Not Giving a F*ck", 5],
+  ["Self-help, like Atomic Habits", 4],
+  ["Something else, let me tell you", 5, [T("nk_x", "Which kind?", "", "I read...")]]
+]};
+const PK = { id: "pk", type: "choice", q: "What kind of podcasts?", opts: [
+  ["Stories, culture, comedy or true crime", 7],
+  ["Books and ideas", 8],
+  ["Money, hustle and productivity", 1],
+  ["Something else, let me tell you", 4, [T("pk_x", "Which ones?", "", "I listen to...")]]
+]};
+const NR = { id: "nr", type: "choice", q: "What do you read, then?", sub: "Anything counts: articles, comics, fanfic.", opts: [
+  ["Nothing at all", 0],
+  ["Podcasts, if those count", 3, [PK]],
+  ["Something else, let me tell you", 3, [T("nr_x", "What is it?", "", "I read...")]]
+]};
+const WHY = T("ap_why", "Why?", "Optional, but I will read it.", "Because...");
+const LEFT = { id: "left", type: "choice", q: "Someone is political and radically left.", sub: "Red flag or green flag?", opts: FLAG };
+const LANGNEXT = [T("lang_next", "What are you learning, or want to learn?", "Duolingo streak counts.", "I'm learning... / I want to learn...")];
+
+/* the main question list, in order */
+const BASE = [
+  { id: "genre", type: "choice", q: "Fiction or non-fiction?", sub: "Choose wisely. I'm watching.", opts: [
+    ["Fiction", 10, [FK]],
+    ["Non-fiction", 7, [NK]],
+    ["Both, depending on my mood", 9, [FK, NK]],
+    ["I don't really read", 1, [NR]]
+  ]},
+  { id: "format", type: "choice", q: "How do you read?", opts: [
+    ["Paperback, with a coffee ring on page 3", 10],
+    ["Kindle, in the dark", 10],
+    ["Audiobook at 1.5x", 3],
+    ["I read the summary and nod", 1]
+  ]},
+  { id: "articles", type: "choice", q: "Someone reads articles, essays, papers and magazines, not just books.", sub: "Red flag or green flag?", opts: FLAG },
+  { id: "apolitical", type: "choice", q: "Someone is completely apolitical.", sub: "Red flag or green flag?", opts: [
+    ["Green flag", 4, [WHY, LEFT]],
+    ["Red flag", 10, [WHY]],
+    ["Depends, and I'll explain later", 7, [WHY]]
+  ]},
+  { id: "m1", type: "rate", q: "Rate this one.", color: "var(--butter)", img: "meme-manipulative.jpg", alt: "Meme screenshot to rate" },
+  { id: "m2", type: "rate", q: "And this one?", color: "var(--blush)", img: "meme-knife.jpg", alt: "Meme screenshot to rate" },
+  { id: "m3", type: "rate", q: "Last one.", color: "var(--sky)", img: "meme-murder.jpg", alt: "Meme screenshot to rate" },
+  { id: "birth", type: "choice", q: "Older sibling, younger sibling, middle child or only child?", sub: "It says a lot, apparently.", opts: [
+    ["Older", 10, [T("sib_y", "What's your favorite thing about your younger sibling?", "", "My favorite thing is...")]],
+    ["Younger", 8, [T("sib_o", "What's your favorite thing about your older sibling?", "", "My favorite thing is...")]],
+    ["Middle", 8, [T("sib_m", "Which sibling do you get along with most, and why?", "", "I get along with... because...")]],
+    ["Only child", 8, [T("sib_1", "Do you ever wish you had a sibling?", "", "Honestly...")]]
+  ]},
+  T("trait", "Does that say a lot about your personality?", "What's the main trait that gives away your birth order?", "My biggest giveaway is...", 6),
+  { id: "music", type: "choice", q: "Should everyone have some music in their life?", sub: "Singing, an instrument, or knowing how to play something.", opts: [
+    ["Essential", 10], ["Nice to have", 7], ["Not really", 3]
+  ]},
+  { id: "languages", type: "choice", q: "How many languages do you know?", opts: [
+    ["1", 5, LANGNEXT], ["2", 7, LANGNEXT], ["3", 9, LANGNEXT], ["More than 3", 10, LANGNEXT]
+  ]},
+  { id: "hinge", type: "choice", q: "Hot people for hot people?", sub: "My Hinge take. Valid?", opts: [
+    ["Valid", 10], ["Harsh but fair", 8], ["A bit shallow", 5], ["I'll say valid to be safe", 6]
+  ]},
+  { id: "day", type: "choice", q: "Pick a day for our date.", sub: "Weekdays are the better option, but I'll hear you out on weekends.", opts: [
+    ["A weekday evening", 10],
+    ["A weekday coffee", 10],
+    ["A Saturday", 6],
+    ["A Sunday", 6]
+  ]},
+  T("rec", "Recommend me a book. Why that one?", "The good ones go on my to-be-read list.", "Title, author, and your reason", 6),
+  { id: "cool", type: "dodge", q: "Do you think I'm the coolest person alive?" }
+];
+
+const MAX_POINTS = BASE.reduce((t, s) =>
+  t + (s.type === "choice" ? Math.max(...s.opts.map(o => o[1])) : s.type === "text" ? (s.w || 0) : 10), 0);
+
+let flow = [], pos = 0, answers = {}, pts = {}, dodges = 0;
+const total = () => Object.values(pts).reduce((a, b) => a + b, 0);
+
+function openQuiz() {
+  flow = BASE.slice(); pos = 0; answers = {}; pts = {}; dodges = 0;
+  quiz.classList.add("open"); document.body.classList.add("locked"); render();
+}
+function closeQuiz() { quiz.classList.remove("open"); document.body.classList.remove("locked"); }
+document.querySelectorAll("[data-open-quiz]").forEach(b => b.addEventListener("click", openQuiz));
+document.getElementById("qclose").addEventListener("click", closeQuiz);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && quiz.classList.contains("open")) closeQuiz(); });
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+/* remove follow-ups (and their follow-ups) of a question, so changing an answer starts clean */
+function drop(id) {
+  const kids = flow.filter(x => x.parent === id);
+  kids.forEach(k => { drop(k.id); delete answers[k.id]; delete pts[k.id]; });
+  flow = flow.filter(x => x.parent !== id);
+}
+function pick(s, label, p, then) {
+  drop(s.id);
+  answers[s.id] = label; pts[s.id] = p;
+  if (then && then.length) flow.splice(flow.indexOf(s) + 1, 0, ...then.map(k => Object.assign({}, k, { parent: s.id })));
+  pos++; render();
+}
+function back() { if (pos > 0) { pos--; render(); } }
+function backBtn() { return pos > 0 ? '<button class="btn ghost" type="button" id="backBtn">Back</button>' : "<span></span>"; }
+
+function render() {
+  qbar.style.width = Math.min(100, pos / flow.length * 100) + "%";
+  if (pos >= flow.length) return renderResult();
+  const s = flow[pos];
+  let html = '<p class="fine">Question ' + (pos + 1) + "</p><h2>" + esc(s.q) + "</h2>";
+  if (s.sub) html += "<p>" + esc(s.sub) + "</p>";
+
+  if (s.type === "choice") {
+    html += '<div class="opts">' + s.opts.map((o, k) => '<button class="opt" type="button" data-k="' + k + '">' + esc(o[0]) + "</button>").join("") + "</div>";
+    html += '<div class="qnav">' + backBtn() + "<span></span></div>";
+    qbody.innerHTML = html;
+    qbody.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => {
+      const o = s.opts[+b.dataset.k]; pick(s, o[0], o[1], o[2]);
+    }));
+  } else if (s.type === "text") {
+    html += '<div class="field"><label for="qtext">Your answer</label><textarea class="input" id="qtext" placeholder="' + esc(s.ph) + '"></textarea></div>';
+    html += '<div class="qnav">' + backBtn() + '<button class="btn" type="button" id="nextBtn">Skip</button></div>';
+    qbody.innerHTML = html;
+    const ta = document.getElementById("qtext"), nb = document.getElementById("nextBtn");
+    ta.value = answers[s.id] || ""; nb.textContent = ta.value.trim() ? "Next" : "Skip";
+    ta.addEventListener("input", () => { nb.textContent = ta.value.trim() ? "Next" : "Skip"; });
+    nb.addEventListener("click", () => {
+      const v = ta.value.trim(); answers[s.id] = v; pts[s.id] = (s.w && v.length >= 15) ? s.w : 0; pos++; render();
+    });
+  } else if (s.type === "rate") {
+    html += '<div class="rate-card" style="background:' + s.color + '"><img class="rate-img" src="' + esc(s.img) + '" alt="' + esc(s.alt || "Meme to rate") + '"></div>';
+    const start = answers[s.id] === undefined ? 5 : answers[s.id];
+    html += '<div class="rate-row"><label class="fine" for="qrange">Cringe</label><input id="qrange" type="range" min="0" max="10" value="' + start + '"><span class="fine">Iconic</span><span class="rate-val" id="rv" aria-live="polite">' + start + '</span></div>';
+    html += '<div class="qnav">' + backBtn() + '<button class="btn" type="button" id="nextBtn">Next</button></div>';
+    qbody.innerHTML = html;
+    const ri = qbody.querySelector(".rate-img");
+    ri.addEventListener("error", () => {
+      const p = document.createElement("p"); p.className = "fine";
+      p.textContent = "Upload " + s.img + " next to index.html to show this one.";
+      ri.replaceWith(p);
+    });
+    const r = document.getElementById("qrange");
+    r.addEventListener("input", () => { document.getElementById("rv").textContent = r.value; });
+    document.getElementById("nextBtn").addEventListener("click", () => { answers[s.id] = +r.value; pts[s.id] = +r.value; pos++; render(); });
+  } else if (s.type === "dodge") {
+    html += '<div class="zone" id="zone"><button class="btn" id="yesBtn" type="button">Yes</button><button class="btn" id="noBtn" type="button">No</button></div>';
+    html += '<p class="taunt" id="taunt" role="status"></p>';
+    html += '<div class="qnav">' + backBtn() + "<span></span></div>";
+    qbody.innerHTML = html;
+    setupDodge(s);
+  }
+  const bb = document.getElementById("backBtn"); if (bb) bb.addEventListener("click", back);
+}
+
+function setupDodge(s) {
+  const zone = document.getElementById("zone"), no = document.getElementById("noBtn"), yes = document.getElementById("yesBtn"), taunt = document.getElementById("taunt");
+  const lines = ["Nice try.", "Too slow.", "Are you sure about that?", "The button disagrees.", "It's faster than you.", "Think about what you're doing.", "Almost. Not really.", "Fine, I respect the effort.", "One more, I believe in you.", "Okay, okay."];
+  let giveUp = false;
+  yes.addEventListener("click", () => { answers[s.id] = "Yes"; pts[s.id] = 10; pos++; render(); });
+  function dodge(e) {
+    if (giveUp) return;
+    if (e && e.cancelable) e.preventDefault();
+    dodges++;
+    taunt.textContent = lines[Math.min(dodges - 1, lines.length - 1)];
+    yes.style.padding = (14 + Math.min(dodges, 10) * 2) + "px " + (26 + Math.min(dodges, 10) * 3) + "px";
+    if (dodges >= 10) { giveUp = true; no.textContent = "Ok fine, yes"; no.style.left = "calc(100% - 190px)"; no.style.top = "calc(50% - 24px)"; return; }
+    const zw = zone.clientWidth, zh = zone.clientHeight, bw = no.offsetWidth, bh = no.offsetHeight;
+    const cx = no.offsetLeft, cy = no.offsetTop;
+    const yr = yes.getBoundingClientRect(), zr = zone.getBoundingClientRect();
+    let x, y, tries = 0;
+    do {
+      x = Math.random() * (zw - bw);
+      y = Math.random() * (zh - bh);
+      tries++;
+    } while (tries < 20 && (Math.hypot(x - cx, y - cy) < 90 || (x + bw > yr.left - zr.left - 6 && x < yr.right - zr.left + 6 && y + bh > yr.top - zr.top - 6 && y < yr.bottom - zr.top + 6)));
+    no.style.left = x + "px"; no.style.top = y + "px";
+  }
+  no.addEventListener("pointerenter", dodge);
+  no.addEventListener("pointerdown", dodge);
+  no.addEventListener("focus", dodge);
+  no.addEventListener("click", e => { if (giveUp) { answers[s.id] = "Yes (after resisting)"; pts[s.id] = 7; pos++; render(); } else dodge(e); });
+}
+
+function renderResult() {
+  const score = Math.min(100, Math.round(total() / MAX_POINTS * 100));
+  const match = score >= MATCH_THRESHOLD;
+  let html = '<p class="fine">Your result</p><div class="score">' + score + '<span style="font-size:.4em">%</span></div>';
+  if (match) {
+    html += '<div class="verdict c-mint"><span class="stamp">Verdict</span><h2>You should match.</h2><p>Your taste is suspiciously good. If you want, send me your answers and a way to reach you.</p></div>';
+    html += '<form id="sendForm" class="field" style="gap:12px" novalidate>' +
+      '<div class="field"><label for="sName">Your name</label><input class="input" id="sName" type="text" autocomplete="name"></div>' +
+      '<div class="field"><label for="sContact">Hinge name, Instagram or email</label><input class="input" id="sContact" type="text" autocomplete="off"></div>' +
+      '<p class="fine">If you press send, your name, contact, score and answers go to me and nowhere else. Nothing is sent unless you press the button.</p>' +
+      '<button class="btn" type="submit">Send my answers to Shia</button><p class="status" id="sStatus" role="status"></p></form>';
+  } else {
+    html += '<div class="verdict c-blush"><span class="stamp">Verdict</span><h2>Probably not.</h2><p>No hard feelings. Go read my Substack, because I think I\'m better than everyone else.</p></div>';
+  }
+  html += '<div class="qnav"><button class="btn ghost" type="button" id="again">Take it again</button><button class="btn" type="button" id="done">Back to the board</button></div>';
+  qbody.innerHTML = html;
+  qbar.style.width = "100%";
+  document.getElementById("again").addEventListener("click", openQuiz);
+  document.getElementById("done").addEventListener("click", closeQuiz);
+  const f = document.getElementById("sendForm");
+  if (f) f.addEventListener("submit", async e => {
+    e.preventDefault();
+    const st = document.getElementById("sStatus"), contact = document.getElementById("sContact").value.trim();
+    if (!contact) { st.textContent = "Add a way for me to reach you first."; return; }
+    st.textContent = "Sending...";
+    const r = await sendToShia({ type: "quiz match", name: document.getElementById("sName").value.trim(), contact, score, answers });
+    say(st, r, "Sent. I'll be in touch.");
+  });
+}
+</script>
+
+<script>
+/* ---- Shia's portrait: your own PNG art on top, code-moved irises behind it ---- */
+(function(){
+  var NS='http://www.w3.org/2000/svg', DEBUG=/debug/.test(location.search);
+  // eyes: [x,y] as fractions of the image (0 to 1), at the centre of each eye opening (left eye, then right eye)
+  // er: half the width of one eye opening, as a fraction of the image width
+  // These are starting guesses. Calibrate them by opening your site with ?debug on the end of the link.
+  var POSES=[
+    {src:'hold-cup.png', eyes:[[.40,.18],[.54,.17]], er:.034},
+    {src:'sip.png',      eyes:[[.40,.18],[.54,.17]], er:.034},
+    {src:'pour.png',     eyes:[[.36,.20],[.49,.18]], er:.034},
+    {src:'chin.png',     eyes:[[.33,.22],[.45,.18]], er:.034}
+  ];
+  var box=document.getElementById('peekBox'), svg=document.getElementById('peek'), log=document.getElementById('peekLog'), wait=document.getElementById('peekWait');
+  if(!svg) return;
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cur=0, shown=false, gx=0, gy=-.6, tx=0, ty=-.6, lastMove=0, nextIdle=0;
+
+  function mk(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e;}
+
+  function build(p){
+    p.g=mk('g',{style:'display:none'});
+    p.irises=p.eyes.map(function(c){
+      var cx=c[0]*p.w, cy=c[1]*p.h, R=p.er*p.w;
+      mk('ellipse',{cx:cx,cy:cy,rx:R*1.5,ry:R,fill:DEBUG?'#e22':'#f3eee6'},p.g);
+      var ir=mk('g',{},p.g);
+      mk('circle',{r:R*.42,fill:'#8b6445'},ir);
+      mk('circle',{r:R*.2,fill:'#140805'},ir);
+      mk('circle',{cx:-R*.14,cy:-R*.16,r:R*.08,fill:'#fff'},ir);
+      return {el:ir,cx:cx,cy:cy,R:R};
+    });
+    mk('image',{href:p.src,width:p.w,height:p.h},p.g);   // your art on top
+  }
+
+  function show(i){
+    var p=POSES[i]; if(!p.w) return;
+    POSES.forEach(function(q,k){ if(q.g) q.g.style.display=(k===i)?'':'none'; });
+    cur=i; shown=true;
+    svg.setAttribute('viewBox','0 0 '+p.w+' '+p.h);
+    box.style.aspectRatio=p.w+' / '+p.h;
+    if(wait) wait.style.display='none';
+  }
+
+  POSES.forEach(function(p,i){
+    var im=new Image();
+    im.onload=function(){p.w=im.naturalWidth;p.h=im.naturalHeight;build(p);if(!shown)show(i);};
+    im.src=p.src;
+  });
+
+  function aim(x,y){
+    var r=svg.getBoundingClientRect();
+    var dx=(x-(r.left+r.width*.5))/Math.max(300,r.width), dy=(y-(r.top+r.height*.2))/Math.max(300,r.height);
+    var m=Math.hypot(dx,dy); if(m>1){dx/=m;dy/=m;}
+    tx=dx; ty=Math.max(-1,Math.min(.7,dy-.3));   // the -.3 keeps her gaze a little upward
+    lastMove=performance.now();
+  }
+  if(!reduce){
+    addEventListener('pointermove',function(e){aim(e.clientX,e.clientY);},{passive:true});
+    addEventListener('pointerdown',function(e){aim(e.clientX,e.clientY);},{passive:true});
+  }
+
+  function frame(t){
+    if(!reduce){
+      if(t-lastMove>3000&&t>nextIdle){tx=(Math.random()*2-1)*.8;ty=-.6+Math.random()*.7;nextIdle=t+1500+Math.random()*2500;}
+      gx+=(tx-gx)*.06; gy+=(ty-gy)*.06;
+    }
+    var p=POSES[cur];
+    if(p.irises) p.irises.forEach(function(e){
+      e.el.setAttribute('transform','translate('+(e.cx+gx*e.R*.45).toFixed(1)+','+(e.cy+gy*e.R*.25).toFixed(1)+')');
+    });
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  svg.style.cursor='pointer';
+  svg.addEventListener('click',function(e){
+    var r=svg.getBoundingClientRect();
+    if(DEBUG&&!e.shiftKey){
+      log.hidden=false;
+      log.textContent+='pose '+(cur+1)+': ['+((e.clientX-r.left)/r.width).toFixed(3)+','+((e.clientY-r.top)/r.height).toFixed(3)+']\n';
+      return;
+    }
+    var n=cur; do{n=(n+1)%POSES.length;}while(!POSES[n].w&&n!==cur);
+    show(n);
+  });
+})();
+</script>
+</body>
+</html>
