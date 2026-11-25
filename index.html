@@ -118,6 +118,13 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .c-ink { background: var(--ink); color: var(--paper); border-color: transparent; }
 .c-ink .btn.alt, .c-tomato .btn.alt { background: var(--paper); color: var(--cherry); }
 
+/* your photo in the About me tile */
+.me-photo {
+  aspect-ratio: 3 / 4; border-radius: 999px 999px 16px 16px; overflow: hidden;
+  background: repeating-linear-gradient(135deg, var(--champagne) 0 2px, var(--pearl) 2px 16px);
+}
+.me-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 40%; display: block; }
+
 /* photo tiles in different shapes, with captions */
 .photo-tile { padding: 14px; gap: 10px; }
 .photo-tile .pic {
@@ -129,7 +136,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .shape-arch .pic { aspect-ratio: 3 / 4; border-radius: 999px 999px 16px 16px; }
 .photo-tile figcaption { font-family: var(--display); font-style: italic; font-size: 26px; line-height: 1.05; text-align: center; padding: 2px 6px 6px; }
 
-/* portrait: your own art, with code-moved irises behind it */
+/* portrait: your own art, with code-moved irises behind it (not shown until you add it back) */
 .portrait { position: relative; aspect-ratio: 3 / 4; border-radius: 18px; overflow: hidden; }
 .portrait svg { width: 100%; height: 100%; display: block; }
 .portrait .wait {
@@ -239,19 +246,12 @@ select.input { appearance: auto; }
   <main class="board" id="board">
 
     <article class="tile c-lilac">
-      <div class="portrait" id="peekBox">
-        <svg id="peek" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration of Shia. Her eyes follow your cursor. Click her to change pose."></svg>
-        <div class="wait" id="peekWait">Upload hold-cup.png, sip.png, pour.png and chin.png next to index.html</div>
+      <div class="me-photo">
+        <img src="me.jpg" alt="Shia with dark hair and burgundy streaks, resting her chin on her hand" onerror="this.style.display='none'">
       </div>
-      <pre id="peekLog" hidden style="font-size:12px;white-space:pre-wrap;margin:0"></pre>
       <h2>About me</h2>
       <p>Hi, I'm Shia. I'm 5'9". I'm getting used to wearing heels, because the long-term goal is to become a tree. I read, I write, I cook, and I vibe-code things like this at midnight.</p>
     </article>
-
-    <figure class="tile photo-tile shape-arch c-lilac">
-      <div class="pic"><img src="me.jpg" alt="Shia with dark hair and burgundy streaks, resting her chin on her hand" onerror="this.style.display='none'"></div>
-      <figcaption>Hi, that's me.</figcaption>
-    </figure>
 
     <article class="tile c-tomato">
       <span class="eyebrow">Substack</span>
@@ -738,94 +738,6 @@ function renderResult() {
     say(st, r, "Sent. I'll be in touch.");
   });
 }
-</script>
-
-<script>
-/* ---- Shia's portrait: your own PNG art on top, code-moved irises behind it ---- */
-(function(){
-  var NS='http://www.w3.org/2000/svg', DEBUG=/debug/.test(location.search);
-  // eyes: [x,y] as fractions of the image (0 to 1), at the centre of each eye opening (left eye, then right eye)
-  // er: half the width of one eye opening, as a fraction of the image width
-  // These are starting guesses. Calibrate them by opening your site with ?debug on the end of the link.
-  var POSES=[
-    {src:'hold-cup.png', eyes:[[.40,.18],[.54,.17]], er:.034},
-    {src:'sip.png',      eyes:[[.40,.18],[.54,.17]], er:.034},
-    {src:'pour.png',     eyes:[[.36,.20],[.49,.18]], er:.034},
-    {src:'chin.png',     eyes:[[.33,.22],[.45,.18]], er:.034}
-  ];
-  var box=document.getElementById('peekBox'), svg=document.getElementById('peek'), log=document.getElementById('peekLog'), wait=document.getElementById('peekWait');
-  if(!svg) return;
-  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var cur=0, shown=false, gx=0, gy=-.6, tx=0, ty=-.6, lastMove=0, nextIdle=0;
-
-  function mk(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e;}
-
-  function build(p){
-    p.g=mk('g',{style:'display:none'});
-    p.irises=p.eyes.map(function(c){
-      var cx=c[0]*p.w, cy=c[1]*p.h, R=p.er*p.w;
-      mk('ellipse',{cx:cx,cy:cy,rx:R*1.5,ry:R,fill:DEBUG?'#e22':'#f3eee6'},p.g);
-      var ir=mk('g',{},p.g);
-      mk('circle',{r:R*.42,fill:'#8b6445'},ir);
-      mk('circle',{r:R*.2,fill:'#140805'},ir);
-      mk('circle',{cx:-R*.14,cy:-R*.16,r:R*.08,fill:'#fff'},ir);
-      return {el:ir,cx:cx,cy:cy,R:R};
-    });
-    mk('image',{href:p.src,width:p.w,height:p.h},p.g);   // your art on top
-  }
-
-  function show(i){
-    var p=POSES[i]; if(!p.w) return;
-    POSES.forEach(function(q,k){ if(q.g) q.g.style.display=(k===i)?'':'none'; });
-    cur=i; shown=true;
-    svg.setAttribute('viewBox','0 0 '+p.w+' '+p.h);
-    box.style.aspectRatio=p.w+' / '+p.h;
-    if(wait) wait.style.display='none';
-  }
-
-  POSES.forEach(function(p,i){
-    var im=new Image();
-    im.onload=function(){p.w=im.naturalWidth;p.h=im.naturalHeight;build(p);if(!shown)show(i);};
-    im.src=p.src;
-  });
-
-  function aim(x,y){
-    var r=svg.getBoundingClientRect();
-    var dx=(x-(r.left+r.width*.5))/Math.max(300,r.width), dy=(y-(r.top+r.height*.2))/Math.max(300,r.height);
-    var m=Math.hypot(dx,dy); if(m>1){dx/=m;dy/=m;}
-    tx=dx; ty=Math.max(-1,Math.min(.7,dy-.3));   // the -.3 keeps her gaze a little upward
-    lastMove=performance.now();
-  }
-  if(!reduce){
-    addEventListener('pointermove',function(e){aim(e.clientX,e.clientY);},{passive:true});
-    addEventListener('pointerdown',function(e){aim(e.clientX,e.clientY);},{passive:true});
-  }
-
-  function frame(t){
-    if(!reduce){
-      if(t-lastMove>3000&&t>nextIdle){tx=(Math.random()*2-1)*.8;ty=-.6+Math.random()*.7;nextIdle=t+1500+Math.random()*2500;}
-      gx+=(tx-gx)*.06; gy+=(ty-gy)*.06;
-    }
-    var p=POSES[cur];
-    if(p.irises) p.irises.forEach(function(e){
-      e.el.setAttribute('transform','translate('+(e.cx+gx*e.R*.45).toFixed(1)+','+(e.cy+gy*e.R*.25).toFixed(1)+')');
-    });
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-
-  svg.style.cursor='pointer';
-  svg.addEventListener('click',function(e){
-    var r=svg.getBoundingClientRect();
-    if(DEBUG&&!e.shiftKey){
-      log.hidden=false;
-      log.textContent+='pose '+(cur+1)+': ['+((e.clientX-r.left)/r.width).toFixed(3)+','+((e.clientY-r.top)/r.height).toFixed(3)+']\n';
-      return;
-    }
-    var n=cur; do{n=(n+1)%POSES.length;}while(!POSES[n].w&&n!==cur);
-    show(n);
-  });
-})();
 </script>
 </body>
 </html>
